@@ -1,0 +1,33 @@
+# Arquivos de ambiente
+.env
+__pycache__/
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# Arquivos específicos do Python
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.Python/
+build/
+dist/
+
+# Arquivos específicos do Flask/IDE
+instance/
+.flaskenv
+.vscode/ # Pasta de configurações do VS Code (opcional, se não quiser compartilhar)
+
+# Dados e logs gerados
+*.log
+*.sqlite3
+*.db
+data/ # Se você gerar dados localmente antes de subir para o S3
+results/ # Se tiver uma pasta de resultados de queries ou algo assim
+
+# Arquivos específicos do sistema operacional
+.DS_Store
+Thumbs.db

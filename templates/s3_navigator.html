@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Navegador S3{% endblock %}
+
+{% block content %}
+    <section class="s3-browser">
+        <h1>Navegador AWS S3</h1>
+        <p>Selecione um bucket e navegue pelas pastas e arquivos.</p>
+        
+        <div class="s3-controls">
+            <div class="s3-bucket-select-container">
+                <label for="bucketSelect">Bucket:</label>
+                <select id="bucketSelect">
+                    <option value="">Carregando buckets...</option>
+                </select>
+            </div>
+            
+            <div class="s3-path-controls">
+                <button id="goUpButton" disabled>
+                    <span class="icon">⬆️</span> Voltar
+                </button>
+                <div class="s3-path-display">
+                    Caminho: <span id="currentPath">Nenhum bucket selecionado</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Nome</th>
+                    <th>Tamanho</th>
+                    <th>Última Modificação</th>
+                </tr>
+            </thead>
+            <tbody id="s3ContentTableBody">
+                <tr><td colspan="4" style="text-align: center;">Selecione um bucket para começar.</td></tr>
+            </tbody>
+        </table>
+    </section>
+{% endblock %}

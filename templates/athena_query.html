@@ -1,0 +1,109 @@
+{# templates/athena_query.html #}
+{% extends "base.html" %}
+
+{% block title %}Consulta Athena{% endblock %}
+
+{# Não usaremos block head_extra para estilos aqui, pois eles irão para style.css #}
+
+{% block content %}
+    <h1>Consultas AWS Athena</h1>
+
+    <div class="athena-section">
+        <h2>Executar Consulta SQL</h2>
+        <textarea id="athenaQueryInput" placeholder="Ex: SELECT * FROM seu_catalogo.sua_tabela LIMIT 10;"></textarea>
+        <button id="executeAthenaQueryButton" onclick="executeAthenaQuery()">
+            <span class="loading-spinner" id="athenaSpinner"></span>
+            Executar Consulta
+        </button>
+        <div id="athenaMessage" class="message"></div>
+        
+        <div class="athena-results">
+            <h3>Resultados da Consulta</h3>
+            <div id="athenaResultsTableContainer">
+                <p style="text-align: center; color: #666; padding: 20px;">Os resultados da consulta aparecerão aqui.</p>
+            </div>
+        </div>
+    </div>
+
+    {# O JavaScript do Athena permanece aqui para escopo local e reuso do seu código #}
+    <script>
+        const athenaQueryInput = document.getElementById('athenaQueryInput');
+        const executeAthenaQueryButton = document.getElementById('executeAthenaQueryButton');
+        const athenaSpinner = document.getElementById('athenaSpinner');
+        const athenaMessageDiv = document.getElementById('athenaMessage');
+        const athenaResultsTableContainer = document.getElementById('athenaResultsTableContainer');
+
+        function showMessage(targetElement, type, message) {
+            targetElement.className = `message ${type}`;
+            targetElement.innerText = message;
+        }
+
+        async function executeAthenaQuery() {
+            const query = athenaQueryInput.value.trim();
+            if (!query) {
+                showMessage(athenaMessageDiv, 'error', 'Por favor, insira uma consulta SQL.');
+                return;
+            }
+
+            executeAthenaQueryButton.disabled = true;
+            athenaSpinner.style.display = 'inline-block';
+            showMessage(athenaMessageDiv, 'info', 'Executando consulta Athena... Isso pode levar algum tempo.');
+            athenaResultsTableContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;"><span class="loading-spinner" style="display:inline-block;"></span> Carregando resultados...</p>';
+
+            try {
+                const response = await fetch('/api/athena_query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.results && data.results.length > 0) {
+                        renderAthenaResults(data.results);
+                        showMessage(athenaMessageDiv, 'success', 'Consulta Athena executada com sucesso!');
+                    } else {
+                        athenaResultsTableContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">A consulta retornou zero resultados ou foi apenas uma DDL/DML.</p>';
+                        showMessage(athenaMessageDiv, 'info', 'Consulta Athena executada. Nenhum dado para exibir ou DDL/DML.');
+                    }
+                } else {
+                    athenaResultsTableContainer.innerHTML = `<p style="text-align: center; color: red; padding: 20px;">Erro: ${data.message || 'Erro desconhecido ao executar a consulta.'}</p>`;
+                    showMessage(athenaMessageDiv, 'error', `Erro na consulta Athena: ${data.message || 'Erro desconhecido.'}`);
+                }
+            } catch (error) {
+                athenaResultsTableContainer.innerHTML = `<p style="text-align: center; color: red; padding: 20px;">Erro de rede ou servidor: ${error.message}</p>`;
+                showMessage(athenaMessageDiv, 'error', `Erro de rede ou servidor: ${error.message}`);
+            } finally {
+                executeAthenaQueryButton.disabled = false;
+                athenaSpinner.style.display = 'none';
+            }
+        }
+
+        function renderAthenaResults(results) {
+            if (!results || results.length === 0) {
+                athenaResultsTableContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nenhum resultado para exibir.</p>';
+                return;
+            }
+
+            // Assume the first row is headers
+            const headers = results[0];
+            const dataRows = results.slice(1);
+
+            let tableHTML = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            dataRows.forEach(row => {
+                tableHTML += '<tr>';
+                row.forEach(cell => {
+                    tableHTML += `<td>${cell || ''}</td>`; // Display empty string for null values
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            athenaResultsTableContainer.innerHTML = tableHTML;
+        }
+    </script>
+{% endblock %}

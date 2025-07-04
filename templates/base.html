@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Desafio Tech{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="main-layout">
+        <header class="top-header">
+            <h1>Desafio Tech - B3 Data Tools</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                            <span class="icon">📊</span> Raspagem de Dados
+                        </a></li>
+                        <li><a href="/s3_navigator" class="{% if request.path == '/s3_navigator' %}active{% endif %}">
+                            <span class="icon">☁️</span> Navegador S3
+                        </a></li>
+                        <li><a href="/athena_query" class="{% if request.path == '/athena_query' %}active{% endif %}">
+                            <span class="icon">🔍</span> Query Athena
+                        </a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="content-area">
+                {% block content %}
+                {# Conteúdo específico da página será inserido aqui #}
+                {% endblock %}
+            </main>
+        </div>
+
+        <footer class="main-footer">
+            <p>&copy; 2025 Tech Challenger Project</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}
+    {# Scripts específicos de cada página, como o do Athena, serão inseridos aqui #}
+    {% endblock %}
+</body>
+</html>

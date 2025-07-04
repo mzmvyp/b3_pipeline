@@ -1,0 +1,533 @@
+/* static/css/style.css - Versão Final Consolidada e Refinada */
+
+/* Reset básico */
+body, h1, h2, h3, p, ul, li, button, input, select, table, textarea {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%; /* Garante que HTML e BODY ocupem 100% da viewport */
+    overflow: hidden; /* Evita scroll indesejado no HTML/BODY */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+    display: flex; /* Faz o body um container flex */
+    flex-direction: column; /* Organiza os itens (main-layout) em coluna */
+    width: 100%;
+}
+
+/* Layout Principal do Body */
+.main-layout {
+    display: flex;
+    flex-direction: column; /* Header, content-wrapper, footer empilhados */
+    flex: 1; /* Permite que o main-layout cresça e ocupe o espaço restante do body */
+    overflow: hidden; /* Evita que o conteúdo filho cause scroll no main-layout */
+}
+
+.top-header {
+    background: #0056b3; /* Azul escuro */
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+    flex-shrink: 0; /* Garante que o header não encolha */
+}
+
+.top-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+/* Container para Sidebar e Conteúdo Principal */
+.content-wrapper {
+    display: flex; /* Faz este container flex para sidebar e content-area */
+    flex: 1; /* Permite que o content-wrapper cresça e ocupe o espaço restante */
+    overflow: hidden; /* Importante para gerenciar o scroll dentro de sidebar/content-area */
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Garante que a sidebar não encolha */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo da sidebar for muito longo */
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 5px;
+}
+
+.sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-left: 5px solid transparent;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #555;
+    color: #ffd700;
+    border-left-color: #ffd700;
+}
+
+.sidebar nav ul li a.active {
+    background-color: #007bff;
+    border-left-color: #ffd700;
+    color: #fff;
+}
+
+.sidebar nav ul li a .icon {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.content-area {
+    flex: 1; /* Ocupa o restante do espaço horizontal */
+    padding: 30px;
+    background-color: #f4f4f4;
+    overflow-y: auto; /* Permite rolagem no conteúdo principal se for muito longo */
+    -webkit-overflow-scrolling: touch; /* Melhora o scroll em iOS */
+}
+
+/* Estilos de Seção (gerais para todas as seções, incluindo o athena-section) */
+section {
+    background: #fff;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+section h1 { /* Título principal da página */
+    color: #0056b3;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 2em;
+}
+
+section h2 { /* Subtítulo de seções */
+    color: #0056b3;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.7em;
+}
+
+section h3 { /* Títulos menores dentro de seções */
+    color: #0056b3;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+/* Estilos para Formulários (inputs, selects, textareas) */
+input[type="text"],
+select,
+textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 100%; /* Garante que ocupem a largura total disponível */
+    margin-bottom: 15px; /* Espaço entre os campos */
+    box-sizing: border-box; /* Inclui padding na largura total */
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+    font-family: monospace; /* Para código SQL */
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block; /* Para que o label ocupe sua própria linha */
+}
+
+/* Botões */
+button, input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espaçamento entre texto e spinner */
+}
+
+button:hover, input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Mensagens de feedback */
+.message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Loader Spinner (aplicável a .loader e .loading-spinner) */
+.loader, .loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: none; /* Escondido por padrão */
+    flex-shrink: 0; /* Impede que o spinner encolha */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* S3 Browser Specific Styles */
+.s3-browser .s3-controls {
+    display: flex;
+    flex-direction: column; /* Organiza select e path-controls em coluna */
+    gap: 15px;
+    margin-bottom: 25px;
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.s3-browser .s3-bucket-select-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.s3-bucket-select-container label {
+    margin-bottom: 0; /* Ajuste para alinhar com o select */
+    flex-shrink: 0; /* Não deixa o label encolher */
+}
+.s3-bucket-select-container select {
+    flex-grow: 1; /* Permite que o select cresça */
+    min-width: 150px;
+    margin-bottom: 0; /* Remove margin-bottom que é global para inputs/selects */
+}
+
+.s3-browser .s3-path-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+}
+
+.s3-browser .s3-path-display {
+    flex: 1; /* Ocupa o espaço restante */
+    padding: 8px 12px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #555;
+    word-break: break-all; /* Quebra palavras longas */
+}
+
+.s3-browser .s3-path-display span {
+    font-weight: bold;
+    color: #0056b3;
+}
+.s3-browser .s3-path-display a { /* Estilo para links no breadcrumb */
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+.s3-browser .s3-path-display a:hover {
+    text-decoration: underline;
+}
+
+/* Tabelas (gerais para S3 e Athena) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #e9ecef;
+    color: #333;
+    font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.item-name.is-prefix { /* Específico para S3 */
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.item-name.is-prefix:hover { /* Específico para S3 */
+    text-decoration: underline;
+}
+
+/* Estilos Específicos do Athena Section (migrados do inline do seu antigo athena_query.html) */
+.athena-section {
+    margin-top: 30px; 
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+}
+
+.athena-section textarea { /* Sobrescreve o estilo geral de textarea */
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 1em;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 15px; /* Mantém o espaçamento */
+}
+
+.athena-section button { /* Sobrescreve o estilo geral de button para margem específica */
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.athena-results {
+    margin-top: 20px;
+    max-height: 500px; /* Limita a altura e adiciona scroll */
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.athena-results table { /* Sobrescreve o estilo geral de table */
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.athena-results th, .athena-results td { /* Sobrescreve o estilo geral de th/td */
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.athena-results th { /* Sobrescreve o estilo geral de th */
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.athena-results tr:nth-child(even) { /* Sobrescreve o estilo geral de tr:nth-child(even) */
+    background-color: #f9f9f9;
+}
+
+
+/* Footer Principal */
+.main-footer {
+    text-align: center;
+    margin-top: auto; /* Empurra o rodapé para o fim do main-layout */
+    padding: 15px;
+    border-top: 1px solid #eee;
+    color: #777;
+    font-size: 0.9em;
+    background-color: #fff;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+    flex-shrink: 0; /* Garante que o footer não encolha */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column; /* Em telas pequenas, a sidebar fica em cima do conteúdo principal */
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        box-shadow: none;
+        padding: 10px 0;
+        min-height: unset; /* Remove min-height específico para mobile */
+    }
+
+    .sidebar nav ul {
+        flex-direction: row; /* Itens do menu da sidebar em linha no mobile */
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .sidebar nav ul li {
+        margin: 5px;
+    }
+
+    .sidebar nav ul li a {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 8px 15px;
+    }
+    
+    .sidebar nav ul li a:hover,
+    .sidebar nav ul li a.active {
+        border-bottom-color: #ffd700;
+        border-left-color: transparent;
+    }
+
+    .content-area {
+        padding: 20px;
+    }
+    
+    /* Para telas muito pequenas, ajuste o padding da seção */
+    section {
+        padding: 15px;
+    }
+
+    .s3-browser .s3-controls {
+        flex-direction: column; /* Coloca os controles um embaixo do outro no mobile */
+        gap: 10px;
+    }
+    .s3-browser .s3-bucket-select-container,
+    .s3-browser .s3-path-controls {
+        flex-direction: column; /* Empilha itens dentro dos controles */
+        width: 100%;
+    }
+    .s3-bucket-select-container select,
+    .s3-browser .s3-path-display,
+    .s3-path-controls button {
+        width: 100%; /* Ocupa a largura total */
+    }
+    /* static/css/style.css */
+
+/* Estilos para o spinner de carregamento */
+.loader {
+    border: 4px solid #f3f3f3; /* Cinza claro */
+    border-top: 4px solid #3498db; /* Azul */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: none; /* Escondido por padrão */
+    margin-left: 10px; /* Espaçamento ao lado do botão */
+    vertical-align: middle; /* Alinha verticalmente com o texto do botão */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para as mensagens de feedback */
+.message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: block; /* Garante que a mensagem ocupe sua própria linha */
+    text-align: center; /* Centraliza o texto */
+}
+
+.message.info {
+    background-color: #e7f3fe; /* Azul claro */
+    color: #0c5460; /* Azul escuro */
+    border: 1px solid #007bff;
+}
+
+.message.success {
+    background-color: #d4edda; /* Verde claro */
+    color: #155724; /* Verde escuro */
+    border: 1px solid #28a745;
+}
+
+.message.warning {
+    background-color: #fff3cd; /* Amarelo claro */
+    color: #856404; /* Amarelo escuro */
+    border: 1px solid #ffc107;
+}
+
+.message.error {
+    background-color: #f8d7da; /* Vermelho claro */
+    color: #721c24; /* Vermelho escuro */
+    border: 1px solid #dc3545;
+}
+
+/* Estilo para o botão desabilitado */
+button:disabled {
+    opacity: 0.6; /* Deixa o botão um pouco transparente */
+    cursor: not-allowed; /* Muda o cursor para "proibido" */
+}
+}

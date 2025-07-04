@@ -1,0 +1,6 @@
+Flask
+playwright
+pandas
+boto3
+python-dotenv
+pyarrow
