@@ -1,0 +1,624 @@
+{# templates/analytics.html #}
+{% extends "base.html" %}
+
+{% block title %}Analytics Ibovespa{% endblock %}
+
+{% block content %}
+    <h1>📊 Analytics Ibovespa - Análises Interativas</h1>
+    <p>Execute as mesmas análises do notebook Athena diretamente na web!</p>
+
+    <!-- Seção 1: Análise Geral -->
+    <section id="overview-section">
+        <h2>🎯 1. Análise Geral das Ações</h2>
+        <p>Visualize a composição geral do Ibovespa, ranking das principais ações e distribuição de participações.</p>
+        
+        <div class="analytics-controls">
+            <button id="runOverviewBtn" class="analytics-btn">
+                <span class="loading-spinner" id="overviewSpinner"></span>
+                🚀 Executar Análise Geral
+            </button>
+        </div>
+
+        <div id="overviewResults" class="analytics-results" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>🏢 Total de Empresas</h3>
+                    <span id="totalCompanies" class="stat-value">-</span>
+                </div>
+                <div class="stat-card">
+                    <h3>📈 Participação Total</h3>
+                    <span id="totalParticipation" class="stat-value">-%</span>
+                </div>
+                <div class="stat-card">
+                    <h3>📊 Participação Média</h3>
+                    <span id="avgParticipation" class="stat-value">-%</span>
+                </div>
+                <div class="stat-card">
+                    <h3>📉 Desvio Padrão</h3>
+                    <span id="stdParticipation" class="stat-value">-%</span>
+                </div>
+            </div>
+            
+            <div class="top5-section">
+                <h3>🥇 Top 5 Ações</h3>
+                <div id="top5List" class="top5-list"></div>
+            </div>
+            
+            <div class="chart-container">
+                <img id="overviewChart" src="" alt="Gráfico de Análise Geral" style="width: 100%; max-width: 1200px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção 2: Análise por Tipo -->
+    <section id="type-section">
+        <h2>🔍 2. Análise por Tipo de Ação</h2>
+        <p>Compare ações Ordinárias (ON), Preferenciais (PN) e Units (UNT) no índice.</p>
+        
+        <div class="analytics-controls">
+            <button id="runTypeBtn" class="analytics-btn">
+                <span class="loading-spinner" id="typeSpinner"></span>
+                📊 Executar Análise por Tipo
+            </button>
+        </div>
+
+        <div id="typeResults" class="analytics-results" style="display: none;">
+            <div id="typeStatsGrid" class="type-stats-grid"></div>
+            
+            <div class="chart-container">
+                <img id="typeChart" src="" alt="Gráfico por Tipo de Ação" style="width: 100%; max-width: 1200px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção 3: Análise de Concentração -->
+    <section id="concentration-section">
+        <h2>🎯 3. Análise de Concentração</h2>
+        <p>Avalie o nível de concentração do Ibovespa e identifique quantas ações dominam o índice.</p>
+        
+        <div class="analytics-controls">
+            <button id="runConcentrationBtn" class="analytics-btn">
+                <span class="loading-spinner" id="concentrationSpinner"></span>
+                📈 Executar Análise de Concentração
+            </button>
+        </div>
+
+        <div id="concentrationResults" class="analytics-results" style="display: none;">
+            <div class="concentration-stats">
+                <div class="concentration-card">
+                    <h3>🎯 Top X para 50%</h3>
+                    <span id="pos50" class="concentration-value">- ações</span>
+                </div>
+                <div class="concentration-card">
+                    <h3>🎯 Top X para 80%</h3>
+                    <span id="pos80" class="concentration-value">- ações</span>
+                </div>
+                <div class="concentration-card">
+                    <h3>📏 Índice HHI</h3>
+                    <span id="hhi" class="concentration-value">-</span>
+                </div>
+                <div class="concentration-card">
+                    <h3>📊 Nível de Concentração</h3>
+                    <span id="concentrationLevel" class="concentration-value">-</span>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <img id="concentrationChart" src="" alt="Gráfico de Concentração" style="width: 100%; max-width: 1200px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Execução Completa -->
+    <section id="complete-section">
+        <h2>🚀 4. Executar Todas as Análises</h2>
+        <p>Execute todas as análises de uma vez para ter uma visão completa do Ibovespa.</p>
+        
+        <div class="analytics-controls">
+            <button id="runAllBtn" class="analytics-btn analytics-btn-primary">
+                <span class="loading-spinner" id="allSpinner"></span>
+                🎯 Executar Análise Completa
+            </button>
+        </div>
+    </section>
+
+    <!-- Mensagens de Feedback -->
+    <div id="analyticsMessage" class="message" style="display: none;"></div>
+
+    <script>
+        // Analytics JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Analytics page loaded");
+            
+            // Elementos dos botões
+            const runOverviewBtn = document.getElementById('runOverviewBtn');
+            const runTypeBtn = document.getElementById('runTypeBtn');
+            const runConcentrationBtn = document.getElementById('runConcentrationBtn');
+            const runAllBtn = document.getElementById('runAllBtn');
+            
+            // Elementos de resultados
+            const overviewResults = document.getElementById('overviewResults');
+            const typeResults = document.getElementById('typeResults');
+            const concentrationResults = document.getElementById('concentrationResults');
+            const analyticsMessage = document.getElementById('analyticsMessage');
+            
+            // Função para mostrar mensagens
+            function showMessage(text, type) {
+                analyticsMessage.textContent = text;
+                analyticsMessage.className = `message ${type}`;
+                analyticsMessage.style.display = 'block';
+                setTimeout(() => {
+                    analyticsMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Função para mostrar/esconder spinner
+            function toggleSpinner(spinnerId, show) {
+                const spinner = document.getElementById(spinnerId);
+                if (spinner) {
+                    spinner.style.display = show ? 'inline-block' : 'none';
+                }
+            }
+            
+            // 1. Análise Geral
+            runOverviewBtn.addEventListener('click', async function() {
+                this.disabled = true;
+                toggleSpinner('overviewSpinner', true);
+                showMessage('Executando análise geral...', 'info');
+                
+                try {
+                    const response = await fetch('/api/analytics/overview');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        // Atualizar estatísticas
+                        document.getElementById('totalCompanies').textContent = data.stats.total_companies;
+                        document.getElementById('totalParticipation').textContent = data.stats.total_participation + '%';
+                        document.getElementById('avgParticipation').textContent = data.stats.avg_participation + '%';
+                        document.getElementById('stdParticipation').textContent = data.stats.std_participation + '%';
+                        
+                        // Atualizar Top 5
+                        const top5List = document.getElementById('top5List');
+                        top5List.innerHTML = '';
+                        data.stats.top_5.forEach((item, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'top5-item';
+                            div.innerHTML = `
+                                <span class="rank">${index + 1}.</span>
+                                <span class="ticker">${item.ticker}</span>
+                                <span class="company">${item.nome_empresa}</span>
+                                <span class="participation">${item.participacao}%</span>
+                            `;
+                            top5List.appendChild(div);
+                        });
+                        
+                        // Atualizar gráfico
+                        document.getElementById('overviewChart').src = 'data:image/png;base64,' + data.chart;
+                        
+                        // Mostrar resultados
+                        overviewResults.style.display = 'block';
+                        overviewResults.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showMessage('Análise geral concluída com sucesso!', 'success');
+                    } else {
+                        showMessage('Erro na análise: ' + data.message, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Erro de conexão: ' + error.message, 'error');
+                } finally {
+                    this.disabled = false;
+                    toggleSpinner('typeSpinner', false);
+                }
+            });
+            
+            // 3. Análise de Concentração
+            runConcentrationBtn.addEventListener('click', async function() {
+                this.disabled = true;
+                toggleSpinner('concentrationSpinner', true);
+                showMessage('Executando análise de concentração...', 'info');
+                
+                try {
+                    const response = await fetch('/api/analytics/concentration');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        // Atualizar estatísticas de concentração
+                        document.getElementById('pos50').textContent = data.concentration_stats.pos_50 + ' ações';
+                        document.getElementById('pos80').textContent = data.concentration_stats.pos_80 + ' ações';
+                        document.getElementById('hhi').textContent = data.concentration_stats.hhi;
+                        document.getElementById('concentrationLevel').textContent = data.concentration_stats.concentration_level;
+                        
+                        // Atualizar gráfico
+                        document.getElementById('concentrationChart').src = 'data:image/png;base64,' + data.chart;
+                        
+                        // Mostrar resultados
+                        concentrationResults.style.display = 'block';
+                        concentrationResults.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showMessage('Análise de concentração concluída!', 'success');
+                    } else {
+                        showMessage('Erro na análise: ' + data.message, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Erro de conexão: ' + error.message, 'error');
+                } finally {
+                    this.disabled = false;
+                    toggleSpinner('concentrationSpinner', false);
+                }
+            });
+            
+            // 4. Executar Todas as Análises
+            runAllBtn.addEventListener('click', async function() {
+                showMessage('Executando todas as análises...', 'info');
+                
+                // Executar sequencialmente
+                runOverviewBtn.click();
+                
+                setTimeout(() => {
+                    runTypeBtn.click();
+                }, 2000);
+                
+                setTimeout(() => {
+                    runConcentrationBtn.click();
+                }, 4000);
+                
+                setTimeout(() => {
+                    showMessage('🎉 Todas as análises concluídas com sucesso!', 'success');
+                }, 6000);
+            });
+        });
+    </script>
+
+    <style>
+        /* Estilos específicos da página Analytics */
+        .analytics-controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .analytics-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .analytics-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .analytics-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .analytics-btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            font-size: 18px;
+            padding: 18px 35px;
+        }
+
+        .analytics-results {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        /* Grid de Estatísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Top 5 Section */
+        .top5-section {
+            margin: 30px 0;
+        }
+
+        .top5-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .top5-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .top5-item:last-child {
+            border-bottom: none;
+        }
+
+        .top5-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .top5-item .rank {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .top5-item .ticker {
+            font-weight: bold;
+            color: #333;
+            margin-right: 15px;
+            min-width: 80px;
+        }
+
+        .top5-item .company {
+            flex: 1;
+            color: #666;
+        }
+
+        .top5-item .participation {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 1.1em;
+        }
+
+        /* Type Stats Grid */
+        .type-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .type-stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .type-stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .type-stat-card h3 {
+            margin: 0 0 15px 0;
+            color: #667eea;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .type-stat-card p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        /* Concentration Stats */
+        .concentration-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .concentration-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .concentration-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .concentration-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .concentration-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .chart-container img {
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .stats-grid,
+            .type-stats-grid,
+            .concentration-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .analytics-btn-primary {
+                padding: 15px 25px;
+                font-size: 16px;
+            }
+            
+            .top5-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .top5-item .ticker,
+            .top5-item .company,
+            .top5-item .participation {
+                margin-right: 0;
+                min-width: auto;
+            }
+        }
+
+        /* Animações de entrada */
+        .analytics-results {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Efeitos hover nos cards */
+        .stat-card,
+        .type-stat-card,
+        .concentration-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before,
+        .type-stat-card::before,
+        .concentration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .stat-card:hover::before,
+        .type-stat-card:hover::before,
+        .concentration-card:hover::before {
+            left: 100%;
+        }
+    </style>
+{% endblock %}, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Erro de conexão: ' + error.message, 'error');
+                } finally {
+                    this.disabled = false;
+                    toggleSpinner('overviewSpinner', false);
+                }
+            });
+            
+            // 2. Análise por Tipo
+            runTypeBtn.addEventListener('click', async function() {
+                this.disabled = true;
+                toggleSpinner('typeSpinner', true);
+                showMessage('Executando análise por tipo...', 'info');
+                
+                try {
+                    const response = await fetch('/api/analytics/by_type');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        // Atualizar estatísticas por tipo
+                        const typeStatsGrid = document.getElementById('typeStatsGrid');
+                        typeStatsGrid.innerHTML = '';
+                        
+                        Object.keys(data.type_stats).forEach(tipo => {
+                            const stats = data.type_stats[tipo];
+                            const div = document.createElement('div');
+                            div.className = 'type-stat-card';
+                            div.innerHTML = `
+                                <h3>📊 Tipo ${tipo}</h3>
+                                <p><strong>Quantidade:</strong> ${stats.count} ações</p>
+                                <p><strong>Participação Total:</strong> ${stats.total_participation}%</p>
+                                <p><strong>Participação Média:</strong> ${stats.avg_participation}%</p>
+                            `;
+                            typeStatsGrid.appendChild(div);
+                        });
+                        
+                        // Atualizar gráfico
+                        document.getElementById('typeChart').src = 'data:image/png;base64,' + data.chart;
+                        
+                        // Mostrar resultados
+                        typeResults.style.display = 'block';
+                        typeResults.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showMessage('Análise por tipo concluída!', 'success');
+                    } else {
+                        showMessage('Erro na análise: ' + data.message

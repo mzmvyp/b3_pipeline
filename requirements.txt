@@ -4,3 +4,6 @@ pandas
 boto3
 python-dotenv
 pyarrow
+matplotlib
+seaborn
+numpy

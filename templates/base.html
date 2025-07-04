@@ -16,16 +16,23 @@
             <aside class="sidebar">
                 <nav>
                     <ul>
-                        <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">
-                            <span class="icon">📊</span> Raspagem de Dados
-                        </a></li>
-                        <li><a href="/s3_navigator" class="{% if request.path == '/s3_navigator' %}active{% endif %}">
-                            <span class="icon">☁️</span> Navegador S3
-                        </a></li>
-                        <li><a href="/athena_query" class="{% if request.path == '/athena_query' %}active{% endif %}">
-                            <span class="icon">🔍</span> Query Athena
-                        </a></li>
-                    </ul>
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                <span class="icon">📊</span> Raspagem de Dados
+            </a></li>
+            <!-- ✅ NOVA OPÇÃO DO DASHBOARD -->
+            <li><a href="/dashboard" class="{% if request.path == '/dashboard' %}active{% endif %}">
+                <span class="icon">📈</span> Dashboard
+            </a></li>
+            <li><a href="/analytics" class="{% if request.path == '/analytics' %}active{% endif %}">
+                <span class="icon">🔬</span> Analytics Ibovespa
+            </a></li>
+            <li><a href="/s3_navigator" class="{% if request.path == '/s3_navigator' %}active{% endif %}">
+                <span class="icon">☁️</span> Navegador S3
+            </a></li>
+            <li><a href="/athena_query" class="{% if request.path == '/athena_query' %}active{% endif %}">
+                <span class="icon">🔍</span> Query Athena
+            </a></li>
+        </ul>
                 </nav>
             </aside>
 

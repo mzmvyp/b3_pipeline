@@ -14,85 +14,89 @@
     </section>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const scrapeButton = document.getElementById('scrapeButton');
-            const scrapeSpinner = document.getElementById('scrapeSpinner');
-            const scrapeMessage = document.getElementById('scrapeMessage');
+       document.addEventListener('DOMContentLoaded', function() {
+    const scrapeButton = document.getElementById('scrapeButton');
+    const scrapeSpinner = document.getElementById('scrapeSpinner');
+    const scrapeMessage = document.getElementById('scrapeMessage');
 
-            // Função para exibir mensagens
-            function showMessage(text, type) {
-                scrapeMessage.textContent = text;
-                scrapeMessage.className = `message ${type}`;
-            }
+    // Função para exibir mensagens
+    function showMessage(text, type) {
+        scrapeMessage.textContent = text;
+        scrapeMessage.className = `message ${type}`;
+    }
 
-            // Função para verificar se os dados já existem
-            function checkExistingData() {
-                // Mostra um spinner ou mensagem enquanto verifica
-                scrapeSpinner.style.display = 'block';
-                scrapeButton.disabled = true; // Desabilita o botão enquanto verifica
-                showMessage('Verificando se os dados já existem...', 'info');
+    // Função para verificar se os dados já existem
+    function checkExistingData() {
+        scrapeSpinner.style.display = 'block';
+        scrapeButton.disabled = true;
+        showMessage('Verificando se os dados já existem...', 'info');
 
-                fetch('/verificar-dados-existentes') // Novo endpoint para verificar
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erro ao verificar dados: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        scrapeSpinner.style.display = 'none'; // Esconde o spinner
-                        scrapeButton.disabled = false; // Habilita o botão
+        // ✅ CORRIGIDO: Rota correta com /api/
+        fetch('/api/verificar-dados-existentes')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao verificar dados: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                scrapeSpinner.style.display = 'none';
+                scrapeButton.disabled = false;
 
-                        if (data.exists) {
-                            showMessage('Os dados de hoje já estão disponíveis no S3. Não é necessário raspar novamente.', 'success');
-                            scrapeButton.disabled = true; // Mantém o botão desabilitado se os dados já existirem
-                        } else {
-                            showMessage('Dados prontos para raspagem.', 'info');
-                            scrapeButton.disabled = false; // Habilita o botão se os dados não existirem
-                        }
-                    })
-                    .catch(error => {
-                        scrapeSpinner.style.display = 'none';
-                        scrapeButton.disabled = false;
-                        showMessage('Erro ao verificar a existência dos dados: ' + error.message, 'error');
-                        console.error('Erro na pré-validação:', error);
-                    });
-            }
-
-            // Chama a função de verificação ao carregar a página
-            checkExistingData();
-
-            // Event listener para o botão de raspagem (mesmo que antes)
-            scrapeButton.addEventListener('click', function() {
-                scrapeButton.disabled = true;
-                scrapeSpinner.style.display = 'block';
-                showMessage('Iniciando raspagem... Isso pode levar alguns minutos.', 'info');
-
-                fetch('/iniciar-raspagem', { method: 'POST' })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erro na requisição: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        scrapeButton.disabled = false;
-                        scrapeSpinner.style.display = 'none';
-
-                        if (data.status === 'success') {
-                            showMessage(data.message || 'Raspagem e upload concluídos com sucesso!', 'success');
-                            scrapeButton.disabled = true; // Desabilita após o sucesso para evitar re-raspagem imediata
-                        } else {
-                            showMessage(data.message || 'Ocorreu um erro durante a raspagem ou upload.', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        scrapeButton.disabled = false;
-                        scrapeSpinner.style.display = 'none';
-                        showMessage('Erro: ' + error.message, 'error');
-                        console.error('Erro na raspagem:', error);
-                    });
+                if (data.exists) {
+                    showMessage('Os dados de hoje já estão disponíveis no S3. Não é necessário raspar novamente.', 'success');
+                    scrapeButton.disabled = true;
+                } else {
+                    showMessage('Dados prontos para raspagem.', 'info');
+                    scrapeButton.disabled = false;
+                }
+            })
+            .catch(error => {
+                scrapeSpinner.style.display = 'none';
+                scrapeButton.disabled = false;
+                showMessage('Erro ao verificar a existência dos dados: ' + error.message, 'error');
+                console.error('Erro na pré-validação:', error);
             });
-        });
+    }
+
+    // Chama a função de verificação ao carregar a página
+    checkExistingData();
+
+    // ✅ CORRIGIDO: Event listener com rota correta
+    scrapeButton.addEventListener('click', function() {
+        scrapeButton.disabled = true;
+        scrapeSpinner.style.display = 'block';
+        showMessage('Iniciando raspagem... Isso pode levar alguns minutos.', 'info');
+
+        // ✅ CORRIGIDO: Rota correta com /api/ e método POST
+        fetch('/api/scrape_and_upload', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                scrapeButton.disabled = false;
+                scrapeSpinner.style.display = 'none';
+
+                if (data.status === 'success') {
+                    showMessage(data.message || 'Raspagem e upload concluídos com sucesso!', 'success');
+                    scrapeButton.disabled = true;
+                } else {
+                    showMessage(data.message || 'Ocorreu um erro durante a raspagem ou upload.', 'error');
+                }
+            })
+            .catch(error => {
+                scrapeButton.disabled = false;
+                scrapeSpinner.style.display = 'none';
+                showMessage('Erro: ' + error.message, 'error');
+                console.error('Erro na raspagem:', error);
+            });
+    });
+});
     </script>
 {% endblock %}
