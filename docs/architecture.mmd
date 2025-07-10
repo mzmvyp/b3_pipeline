@@ -1,0 +1,80 @@
+graph TB
+    %% Definindo estilos
+    classDef sourceStyle fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000
+    classDef webStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef s3Style fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    classDef lambdaStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef glueStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef athenaStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef userStyle fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
+
+    %% Camada de Fonte de Dados
+    subgraph "📊 FONTE DE DADOS"
+        B3[🏢 Site B3<br/>Dados do Ibovespa<br/>vitibrasil.cnpuv.embrapa.br]
+    end
+
+    %% Camada de Ingestão/Scraping
+    subgraph "🔄 CAMADA DE INGESTÃO"
+        APP[🖥️ Aplicação Flask<br/>Interface Web<br/>Dashboard + Analytics]
+        SCRAPER[🤖 Python Scraper<br/>Playwright + BeautifulSoup<br/>Extração de Dados]
+    end
+
+    %% Camada de Armazenamento Raw
+    subgraph "☁️ AWS S3 - ARMAZENAMENTO RAW"
+        S3_RAW[📦 S3 Bucket Raw<br/>your-s3-bucket-name<br/>Particionado: year/month/day<br/>Formato: Parquet]
+    end
+
+    %% Camada de Processamento
+    subgraph "⚡ AWS LAMBDA - TRIGGER"
+        LAMBDA[🔧 Lambda Function<br/>Trigger S3 → Glue<br/>Event-driven]
+    end
+
+    %% Camada ETL
+    subgraph "🏭 AWS GLUE - ETL"
+        GLUE_JOB[⚙️ Glue Job Visual<br/>Transformações:<br/>• Agrupamento numérico<br/>• Renomear colunas<br/>• Cálculos de data]
+        GLUE_CATALOG[📚 Glue Data Catalog<br/>Metadados<br/>Schema Registry]
+    end
+
+    %% Camada de Armazenamento Refined
+    subgraph "☁️ AWS S3 - ARMAZENAMENTO REFINED"
+        S3_REFINED[📊 S3 Bucket Refined<br/>Dados processados<br/>Particionado: date/ticker<br/>Formato: Parquet]
+    end
+
+    %% Camada de Analytics
+    subgraph "🔍 AWS ATHENA - ANALYTICS"
+        ATHENA[📈 Amazon Athena<br/>Queries SQL<br/>Serverless]
+        NOTEBOOK[📓 Athena Notebook<br/>Análises Visuais<br/>Jupyter-like]
+    end
+
+    %% Camada de Usuário
+    subgraph "👥 CAMADA DE APRESENTAÇÃO"
+        USER[👤 Usuário Final]
+        WEB_INTERFACE[🌐 Interface Web<br/>• Dashboard<br/>• Analytics Interativo<br/>• S3 Navigator<br/>• Query Athena]
+    end
+
+    %% Fluxo de Dados
+    B3 -->|HTTP Request<br/>Download CSV| SCRAPER
+    USER -->|Acessa Interface| APP
+    APP -->|Executa Scraping| SCRAPER
+    SCRAPER -->|Processa & Upload<br/>Formato Parquet| S3_RAW
+    S3_RAW -->|S3 Event<br/>Object Created| LAMBDA
+    LAMBDA -->|StartJobRun| GLUE_JOB
+    GLUE_JOB -->|Lê dados raw| S3_RAW
+    GLUE_JOB -->|Grava metadados| GLUE_CATALOG
+    GLUE_JOB -->|Salva dados processados| S3_REFINED
+    S3_REFINED -->|Consulta SQL| ATHENA
+    GLUE_CATALOG -->|Schema metadata| ATHENA
+    ATHENA -->|Análises visuais| NOTEBOOK
+    APP -->|Navegação S3| S3_RAW
+    APP -->|Navegação S3| S3_REFINED
+    APP -->|Queries SQL| ATHENA
+    WEB_INTERFACE -->|Dashboard & Analytics| USER
+
+    %% Aplicando estilos
+    class B3 sourceStyle
+    class APP,WEB_INTERFACE webStyle
+    class S3_RAW,S3_REFINED s3Style
+    class LAMBDA lambdaStyle
+    class GLUE_JOB,GLUE_CATALOG glueStyle
+    class ATHENA,NOTEBOOK athenaStyle
+    class USER,SCRAPER userStyle

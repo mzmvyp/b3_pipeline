@@ -1,132 +1,124 @@
-{# templates/analytics.html #}
+{# templates/analytics.html - REDESIGN PARA MANTER PADRÃO #}
 {% extends "base.html" %}
 
 {% block title %}Analytics Ibovespa{% endblock %}
 
 {% block content %}
-    <h1>📊 Analytics Ibovespa - Análises Interativas</h1>
+    <h1>Analytics Ibovespa - Análises Interativas</h1>
     <p>Execute as mesmas análises do notebook Athena diretamente na web!</p>
 
     <!-- Seção 1: Análise Geral -->
-    <section id="overview-section">
-        <h2>🎯 1. Análise Geral das Ações</h2>
+    <section>
+        <h2>1. Análise Geral das Ações</h2>
         <p>Visualize a composição geral do Ibovespa, ranking das principais ações e distribuição de participações.</p>
         
-        <div class="analytics-controls">
-            <button id="runOverviewBtn" class="analytics-btn">
-                <span class="loading-spinner" id="overviewSpinner"></span>
-                🚀 Executar Análise Geral
-            </button>
-        </div>
+        <button id="runOverviewBtn" class="analytics-btn">
+            <span class="loading-spinner" id="overviewSpinner"></span>
+            Executar Análise Geral
+        </button>
 
         <div id="overviewResults" class="analytics-results" style="display: none;">
+            <h3>Estatísticas Gerais</h3>
             <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>🏢 Total de Empresas</h3>
-                    <span id="totalCompanies" class="stat-value">-</span>
+                <div class="stat-item">
+                    <strong>Total de Empresas:</strong> <span id="totalCompanies">-</span>
                 </div>
-                <div class="stat-card">
-                    <h3>📈 Participação Total</h3>
-                    <span id="totalParticipation" class="stat-value">-%</span>
+                <div class="stat-item">
+                    <strong>Participação Total:</strong> <span id="totalParticipation">-%</span>
                 </div>
-                <div class="stat-card">
-                    <h3>📊 Participação Média</h3>
-                    <span id="avgParticipation" class="stat-value">-%</span>
+                <div class="stat-item">
+                    <strong>Participação Média:</strong> <span id="avgParticipation">-%</span>
                 </div>
-                <div class="stat-card">
-                    <h3>📉 Desvio Padrão</h3>
-                    <span id="stdParticipation" class="stat-value">-%</span>
+                <div class="stat-item">
+                    <strong>Desvio Padrão:</strong> <span id="stdParticipation">-%</span>
                 </div>
             </div>
             
-            <div class="top5-section">
-                <h3>🥇 Top 5 Ações</h3>
-                <div id="top5List" class="top5-list"></div>
+            <h3>Top 5 Ações</h3>
+            <div id="top5List" class="data-table">
+                <!-- Top 5 será preenchido aqui -->
             </div>
             
+            <h3>Gráficos de Participação</h3>
             <div class="chart-container">
-                <img id="overviewChart" src="" alt="Gráfico de Análise Geral" style="width: 100%; max-width: 1200px;">
+                <img id="overviewChart" src="" alt="Gráfico de Análise Geral">
             </div>
         </div>
     </section>
 
     <!-- Seção 2: Análise por Tipo -->
-    <section id="type-section">
-        <h2>🔍 2. Análise por Tipo de Ação</h2>
+    <section>
+        <h2>2. Análise por Tipo de Ação</h2>
         <p>Compare ações Ordinárias (ON), Preferenciais (PN) e Units (UNT) no índice.</p>
         
-        <div class="analytics-controls">
-            <button id="runTypeBtn" class="analytics-btn">
-                <span class="loading-spinner" id="typeSpinner"></span>
-                📊 Executar Análise por Tipo
-            </button>
-        </div>
+        <button id="runTypeBtn" class="analytics-btn">
+            <span class="loading-spinner" id="typeSpinner"></span>
+            Executar Análise por Tipo
+        </button>
 
         <div id="typeResults" class="analytics-results" style="display: none;">
-            <div id="typeStatsGrid" class="type-stats-grid"></div>
+            <h3>Estatísticas por Tipo de Ação</h3>
+            <div id="typeStatsGrid" class="data-table">
+                <!-- Stats por tipo serão preenchidos aqui -->
+            </div>
             
+            <h3>Comparativo Visual por Tipo</h3>
             <div class="chart-container">
-                <img id="typeChart" src="" alt="Gráfico por Tipo de Ação" style="width: 100%; max-width: 1200px;">
+                <img id="typeChart" src="" alt="Gráfico por Tipo de Ação">
             </div>
         </div>
     </section>
 
     <!-- Seção 3: Análise de Concentração -->
-    <section id="concentration-section">
-        <h2>🎯 3. Análise de Concentração</h2>
+    <section>
+        <h2>3. Análise de Concentração</h2>
         <p>Avalie o nível de concentração do Ibovespa e identifique quantas ações dominam o índice.</p>
         
-        <div class="analytics-controls">
-            <button id="runConcentrationBtn" class="analytics-btn">
-                <span class="loading-spinner" id="concentrationSpinner"></span>
-                📈 Executar Análise de Concentração
-            </button>
-        </div>
+        <button id="runConcentrationBtn" class="analytics-btn">
+            <span class="loading-spinner" id="concentrationSpinner"></span>
+            Executar Análise de Concentração
+        </button>
 
         <div id="concentrationResults" class="analytics-results" style="display: none;">
-            <div class="concentration-stats">
-                <div class="concentration-card">
-                    <h3>🎯 Top X para 50%</h3>
-                    <span id="pos50" class="concentration-value">- ações</span>
+            <h3>Métricas de Concentração</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong>Top X para 50%:</strong> <span id="pos50">- ações</span>
                 </div>
-                <div class="concentration-card">
-                    <h3>🎯 Top X para 80%</h3>
-                    <span id="pos80" class="concentration-value">- ações</span>
+                <div class="stat-item">
+                    <strong>Top X para 80%:</strong> <span id="pos80">- ações</span>
                 </div>
-                <div class="concentration-card">
-                    <h3>📏 Índice HHI</h3>
-                    <span id="hhi" class="concentration-value">-</span>
+                <div class="stat-item">
+                    <strong>Índice HHI:</strong> <span id="hhi">-</span>
                 </div>
-                <div class="concentration-card">
-                    <h3>📊 Nível de Concentração</h3>
-                    <span id="concentrationLevel" class="concentration-value">-</span>
+                <div class="stat-item">
+                    <strong>Nível:</strong> <span id="concentrationLevel">-</span>
                 </div>
             </div>
             
+            <h3>Curva de Concentração</h3>
             <div class="chart-container">
-                <img id="concentrationChart" src="" alt="Gráfico de Concentração" style="width: 100%; max-width: 1200px;">
+                <img id="concentrationChart" src="" alt="Gráfico de Concentração">
             </div>
         </div>
     </section>
 
     <!-- Seção de Execução Completa -->
-    <section id="complete-section">
-        <h2>🚀 4. Executar Todas as Análises</h2>
+    <section>
+        <h2>4. Executar Todas as Análises</h2>
         <p>Execute todas as análises de uma vez para ter uma visão completa do Ibovespa.</p>
         
-        <div class="analytics-controls">
-            <button id="runAllBtn" class="analytics-btn analytics-btn-primary">
-                <span class="loading-spinner" id="allSpinner"></span>
-                🎯 Executar Análise Completa
-            </button>
-        </div>
+        <button id="runAllBtn" class="analytics-btn-primary">
+            <span class="loading-spinner" id="allSpinner"></span>
+            Executar Análise Completa
+        </button>
     </section>
 
     <!-- Mensagens de Feedback -->
     <div id="analyticsMessage" class="message" style="display: none;"></div>
 
     <script>
-        // Analytics JavaScript
+        // Analytics JavaScript - Mantendo funcionalidade
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Analytics page loaded");
             
@@ -177,20 +169,21 @@
                         document.getElementById('avgParticipation').textContent = data.stats.avg_participation + '%';
                         document.getElementById('stdParticipation').textContent = data.stats.std_participation + '%';
                         
-                        // Atualizar Top 5
+                        // Atualizar Top 5 - formato tabela simples
                         const top5List = document.getElementById('top5List');
-                        top5List.innerHTML = '';
+                        let tableHTML = '<table><thead><tr><th>Posição</th><th>Ticker</th><th>Empresa</th><th>Participação</th></tr></thead><tbody>';
                         data.stats.top_5.forEach((item, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'top5-item';
-                            div.innerHTML = `
-                                <span class="rank">${index + 1}.</span>
-                                <span class="ticker">${item.ticker}</span>
-                                <span class="company">${item.nome_empresa}</span>
-                                <span class="participation">${item.participacao}%</span>
+                            tableHTML += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td><strong>${item.ticker}</strong></td>
+                                    <td>${item.nome_empresa}</td>
+                                    <td>${item.participacao}%</td>
+                                </tr>
                             `;
-                            top5List.appendChild(div);
                         });
+                        tableHTML += '</tbody></table>';
+                        top5List.innerHTML = tableHTML;
                         
                         // Atualizar gráfico
                         document.getElementById('overviewChart').src = 'data:image/png;base64,' + data.chart;
@@ -200,6 +193,54 @@
                         overviewResults.scrollIntoView({ behavior: 'smooth' });
                         
                         showMessage('Análise geral concluída com sucesso!', 'success');
+                    } else {
+                        showMessage('Erro na análise: ' + data.message, 'error');
+                    }
+                } catch (error) {
+                    showMessage('Erro de conexão: ' + error.message, 'error');
+                } finally {
+                    this.disabled = false;
+                    toggleSpinner('overviewSpinner', false);
+                }
+            });
+            
+            // 2. Análise por Tipo
+            runTypeBtn.addEventListener('click', async function() {
+                this.disabled = true;
+                toggleSpinner('typeSpinner', true);
+                showMessage('Executando análise por tipo...', 'info');
+                
+                try {
+                    const response = await fetch('/api/analytics/by_type');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        // Atualizar estatísticas por tipo - formato tabela
+                        const typeStatsGrid = document.getElementById('typeStatsGrid');
+                        let tableHTML = '<table><thead><tr><th>Tipo</th><th>Quantidade</th><th>Participação Total</th><th>Participação Média</th></tr></thead><tbody>';
+                        
+                        Object.keys(data.type_stats).forEach(tipo => {
+                            const stats = data.type_stats[tipo];
+                            tableHTML += `
+                                <tr>
+                                    <td><strong>${tipo}</strong></td>
+                                    <td>${stats.count} ações</td>
+                                    <td>${stats.total_participation}%</td>
+                                    <td>${stats.avg_participation}%</td>
+                                </tr>
+                            `;
+                        });
+                        tableHTML += '</tbody></table>';
+                        typeStatsGrid.innerHTML = tableHTML;
+                        
+                        // Atualizar gráfico
+                        document.getElementById('typeChart').src = 'data:image/png;base64,' + data.chart;
+                        
+                        // Mostrar resultados
+                        typeResults.style.display = 'block';
+                        typeResults.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showMessage('Análise por tipo concluída!', 'success');
                     } else {
                         showMessage('Erro na análise: ' + data.message, 'error');
                     }
@@ -263,235 +304,141 @@
                 }, 4000);
                 
                 setTimeout(() => {
-                    showMessage('🎉 Todas as análises concluídas com sucesso!', 'success');
+                    showMessage('Todas as análises concluídas com sucesso!', 'success');
                 }, 6000);
             });
         });
     </script>
 
     <style>
-        /* Estilos específicos da página Analytics */
-        .analytics-controls {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .analytics-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Estilos Analytics - SEGUINDO PADRÃO AZUL EXISTENTE */
+        
+        /* Botões - Mesmo padrão do resto do site */
+        .analytics-btn,
+        .analytics-btn-primary {
+            background-color: #007bff;
             color: white;
+            padding: 10px 20px;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
         }
 
-        .analytics-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .analytics-btn:hover,
+        .analytics-btn-primary:hover {
+            background-color: #0056b3;
         }
 
-        .analytics-btn:disabled {
-            opacity: 0.6;
+        .analytics-btn:disabled,
+        .analytics-btn-primary:disabled {
+            background-color: #cccccc;
             cursor: not-allowed;
-            transform: none;
         }
 
         .analytics-btn-primary {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            font-size: 18px;
-            padding: 18px 35px;
+            background-color: #0056b3;
+            font-weight: bold;
+            padding: 12px 25px;
         }
 
+        /* Resultados - Mesmo padrão das outras seções */
         .analytics-results {
-            margin-top: 30px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #007bff;
         }
 
-        /* Grid de Estatísticas */
+        .analytics-results h3 {
+            color: #0056b3;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        /* Grid de Estatísticas - Formato simples */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .stat-card {
+        .stat-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .stat-item strong {
+            color: #0056b3;
+        }
+
+        /* Tabelas - Mesmo padrão do S3 navigator */
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
         }
 
-        .stat-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        /* Top 5 Section */
-        .top5-section {
-            margin: 30px 0;
-        }
-
-        .top5-list {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .top5-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s ease;
-        }
-
-        .top5-item:last-child {
-            border-bottom: none;
-        }
-
-        .top5-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .top5-item .rank {
-            font-weight: bold;
-            color: #667eea;
-            margin-right: 15px;
-            font-size: 1.2em;
-        }
-
-        .top5-item .ticker {
-            font-weight: bold;
+        .data-table th {
+            background-color: #e9ecef;
             color: #333;
-            margin-right: 15px;
-            min-width: 80px;
-        }
-
-        .top5-item .company {
-            flex: 1;
-            color: #666;
-        }
-
-        .top5-item .participation {
             font-weight: bold;
-            color: #27ae60;
-            font-size: 1.1em;
         }
 
-        /* Type Stats Grid */
-        .type-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
-        .type-stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+        .data-table tbody tr:hover {
+            background-color: #f1f1f1;
         }
 
-        .type-stat-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .type-stat-card h3 {
-            margin: 0 0 15px 0;
-            color: #667eea;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .type-stat-card p {
-            margin: 8px 0;
-            color: #555;
-        }
-
-        /* Concentration Stats */
-        .concentration-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .concentration-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .concentration-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .concentration-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .concentration-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #e74c3c;
-        }
-
-        /* Chart Container */
+        /* Container dos gráficos - Simples e clean */
         .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 5px;
+            border: 1px solid #eee;
         }
 
         .chart-container img {
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
         }
 
-        /* Loading Spinner */
+        /* Loading spinner - Mesmo do resto do site */
         .loading-spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid #fff;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
             display: none;
+            flex-shrink: 0;
         }
 
         @keyframes spin {
@@ -501,124 +448,31 @@
 
         /* Responsividade */
         @media (max-width: 768px) {
-            .stats-grid,
-            .type-stats-grid,
-            .concentration-stats {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
             
-            .analytics-btn {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-            
+            .analytics-btn,
             .analytics-btn-primary {
-                padding: 15px 25px;
-                font-size: 16px;
-            }
-            
-            .top5-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            
-            .top5-item .ticker,
-            .top5-item .company,
-            .top5-item .participation {
-                margin-right: 0;
-                min-width: auto;
+                font-size: 14px;
+                padding: 8px 15px;
             }
         }
 
-        /* Animações de entrada */
+        /* Animação suave para aparecer resultados */
         .analytics-results {
-            animation: fadeInUp 0.5s ease-out;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
             }
-        }
-
-        /* Efeitos hover nos cards */
-        .stat-card,
-        .type-stat-card,
-        .concentration-card {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before,
-        .type-stat-card::before,
-        .concentration-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s;
-        }
-
-        .stat-card:hover::before,
-        .type-stat-card:hover::before,
-        .concentration-card:hover::before {
-            left: 100%;
         }
     </style>
-{% endblock %}, 'error');
-                    }
-                } catch (error) {
-                    showMessage('Erro de conexão: ' + error.message, 'error');
-                } finally {
-                    this.disabled = false;
-                    toggleSpinner('overviewSpinner', false);
-                }
-            });
-            
-            // 2. Análise por Tipo
-            runTypeBtn.addEventListener('click', async function() {
-                this.disabled = true;
-                toggleSpinner('typeSpinner', true);
-                showMessage('Executando análise por tipo...', 'info');
-                
-                try {
-                    const response = await fetch('/api/analytics/by_type');
-                    const data = await response.json();
-                    
-                    if (data.status === 'success') {
-                        // Atualizar estatísticas por tipo
-                        const typeStatsGrid = document.getElementById('typeStatsGrid');
-                        typeStatsGrid.innerHTML = '';
-                        
-                        Object.keys(data.type_stats).forEach(tipo => {
-                            const stats = data.type_stats[tipo];
-                            const div = document.createElement('div');
-                            div.className = 'type-stat-card';
-                            div.innerHTML = `
-                                <h3>📊 Tipo ${tipo}</h3>
-                                <p><strong>Quantidade:</strong> ${stats.count} ações</p>
-                                <p><strong>Participação Total:</strong> ${stats.total_participation}%</p>
-                                <p><strong>Participação Média:</strong> ${stats.avg_participation}%</p>
-                            `;
-                            typeStatsGrid.appendChild(div);
-                        });
-                        
-                        // Atualizar gráfico
-                        document.getElementById('typeChart').src = 'data:image/png;base64,' + data.chart;
-                        
-                        // Mostrar resultados
-                        typeResults.style.display = 'block';
-                        typeResults.scrollIntoView({ behavior: 'smooth' });
-                        
-                        showMessage('Análise por tipo concluída!', 'success');
-                    } else {
-                        showMessage('Erro na análise: ' + data.message
+{% endblock %}
