@@ -37,18 +37,19 @@ def upload_to_s3(dataframe, bucket_name, aws_region, processing_date):
     usando um caminho baseado na data de processamento FORNECIDA e estrutura de partição.
     """
     try:
+
         # Formata a data para o nome do arquivo (ex: 2025-07-02)
-        date_str = processing_date.strftime('%Y-%m-%d')
+        date_str = datetime.strptime(processing_date, '%Y-%m-%d')
         
         # ******************************************************************************
         # CORREÇÃO CRÍTICA AQUI: Usar a estrutura de partição exata do seu log
         # ******************************************************************************
         # Ex: data/year=2025/month=07/day=02/ibovespa_2025-07-02.parquet
-        year_str = processing_date.strftime('%Y')
-        month_str = processing_date.strftime('%m')
-        day_str = processing_date.strftime('%d')
+        year_str = date_str.strftime('%Y')
+        month_str = date_str.strftime('%m')
+        day_str = date_str.strftime('%d')
         
-        file_name = f"ibovespa_{date_str}.parquet" # Nome do arquivo final
+        file_name = f"ibovespa_{date_str.strftime('%Y-%m-%d')}.parquet" # Nome do arquivo final
         object_key = f"data/year={year_str}/month={month_str}/day={day_str}/{file_name}"
 
         parquet_buffer = io.BytesIO()

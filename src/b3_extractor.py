@@ -537,7 +537,7 @@ def extrair_dados_ibovespa_selenium():
             
             # Adicionar metadados de extração
             agora = datetime.now()
-            df['data_extracao'] = agora
+            df['data_extracao'] = agora.strftime('%Y-%m-%d %H:%M:%S') 
             df['ano'] = agora.year
             df['mes'] = agora.month
             df['dia'] = agora.day

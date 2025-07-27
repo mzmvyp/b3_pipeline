@@ -22,4 +22,4 @@ def inject_global_vars():
 if __name__ == '__main__':
     print("Iniciando aplicação Flask...")
     # Usa as configurações de debug e host da classe Config
-    app.run(debug=app.config['DEBUG'], host='0.0.0.0', port=5000)
+    app.run(debug=app.config['DEBUG'], host='0.0.0.0', port=5001)

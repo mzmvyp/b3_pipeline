@@ -128,8 +128,8 @@ def enriquecer_dados(df, data_execucao=None):
     df_enriquecido = df.copy()
     
     # Metadados temporais
-    df_enriquecido['data_pregao'] = data_execucao.date()
-    df_enriquecido['timestamp_processamento'] = data_execucao
+    df_enriquecido['data_pregao'] = data_execucao.strftime('%Y-%m-%d')
+    df_enriquecido['timestamp_processamento'] = data_execucao.strftime('%Y-%m-%d %H:%M:%S') 
     
     # Colunas para particionamento
     df_enriquecido['ano'] = data_execucao.year
