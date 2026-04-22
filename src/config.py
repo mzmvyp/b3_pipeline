@@ -71,8 +71,26 @@ def create_sample_env_file(env_path):
     """
     Cria um arquivo .env modelo com as configurações básicas.
     """
-    sample_content = """# Configurações B3 - Tech Challeng
-    
+    sample_content = """# Configurações B3 — modelo (sem segredos). Copie e renomeie se precisar.
+# Preencha localmente; não commite o arquivo .env.
+
+# AWS (preferir IAM role em produção)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=sa-east-1
+
+# S3
+SCRAPING_TARGET_S3_BUCKET=your-s3-bucket-name
+
+# Selenium
+SELENIUM_HEADLESS=true
+SELENIUM_TIMEOUT=30
+
+PARQUET_COMPRESSION=snappy
+LOG_LEVEL=INFO
+FLASK_ENV=production
+"""
+
     try:
         with open(env_path, 'w', encoding='utf-8') as f:
             f.write(sample_content)
@@ -95,7 +113,12 @@ class Config:
     # ==========================================
     DEBUG = os.getenv('FLASK_ENV', 'production') == 'development'
     TESTING = False
-    
+
+    # AWS — somente via ambiente (.env local ou secrets no CI/deploy); nunca commitar chaves
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID') or ''
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') or ''
+    AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'sa-east-1')
+
     # S3 Bucket - usando valor padrão se não configurado
     SCRAPING_TARGET_S3_BUCKET = os.getenv('SCRAPING_TARGET_S3_BUCKET', 'your-s3-bucket-name')
     
