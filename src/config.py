@@ -71,38 +71,7 @@ def create_sample_env_file(env_path):
     """
     Cria um arquivo .env modelo com as configurações básicas.
     """
-    sample_content = """# Configurações B3 - Tech Challenge
-# IMPORTANTE: Substitua os valores pelos seus dados reais
-
-# ==========================================
-# AWS CREDENTIALS (OBRIGATÓRIO)
-# ==========================================
-AWS_ACCESS_KEY_ID=REDACTED_AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=REDACTED_AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION=sa-east-1
-
-# ==========================================
-# S3 CONFIGURATION
-# ==========================================
-SCRAPING_TARGET_S3_BUCKET=your-s3-bucket-name
-
-# ==========================================
-# SELENIUM CONFIGURATION
-# ==========================================
-SELENIUM_HEADLESS=True
-SELENIUM_TIMEOUT=30
-
-# ==========================================
-# PROCESSING CONFIGURATION
-# ==========================================
-PARQUET_COMPRESSION=snappy
-LOG_LEVEL=INFO
-
-# ==========================================
-# ENVIRONMENT
-# ==========================================
-FLASK_ENV=production
-"""
+    sample_content = """# Configurações B3 - Tech Challeng
     
     try:
         with open(env_path, 'w', encoding='utf-8') as f:
@@ -126,13 +95,6 @@ class Config:
     # ==========================================
     DEBUG = os.getenv('FLASK_ENV', 'production') == 'development'
     TESTING = False
-
-    # ==========================================
-    # AWS S3 CONFIGURATIONS
-    # ==========================================
-    AWS_ACCESS_KEY_ID = os.getenv('REDACTED_AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('REDACTED_AWS_SECRET_ACCESS_KEY')
-    AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'sa-east-1')
     
     # S3 Bucket - usando valor padrão se não configurado
     SCRAPING_TARGET_S3_BUCKET = os.getenv('SCRAPING_TARGET_S3_BUCKET', 'your-s3-bucket-name')
@@ -242,17 +204,17 @@ class Config:
         # Validações AWS
         if not cls.AWS_ACCESS_KEY_ID:
             warnings.append("WARNING: AWS_ACCESS_KEY_ID não configurado. Operações AWS falharão.")
-        elif cls.AWS_ACCESS_KEY_ID == 'sua_access_key_aqui':
+        elif cls.AWS_ACCESS_KEY_ID == '':
             warnings.append("WARNING: AWS_ACCESS_KEY_ID tem valor padrão. Configure suas credenciais reais.")
         
         if not cls.AWS_SECRET_ACCESS_KEY:
             warnings.append("WARNING: AWS_SECRET_ACCESS_KEY não configurado. Operações AWS falharão.")
-        elif cls.AWS_SECRET_ACCESS_KEY == 'REDACTED_AWS_SECRET_ACCESS_KEY':
+        elif cls.AWS_SECRET_ACCESS_KEY == '':
             warnings.append("WARNING: AWS_SECRET_ACCESS_KEY tem valor padrão. Configure suas credenciais reais.")
         
         if not cls.SCRAPING_TARGET_S3_BUCKET:
             warnings.append("WARNING: SCRAPING_TARGET_S3_BUCKET não configurado. Upload S3 falhará.")
-        elif cls.SCRAPING_TARGET_S3_BUCKET == 'your-s3-bucket-name':
+        elif cls.SCRAPING_TARGET_S3_BUCKET == '':
             warnings.append("WARNING: SCRAPING_TARGET_S3_BUCKET tem valor padrão. Configure seu bucket real.")
         
         # Validações numéricas
